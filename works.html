@@ -1,0 +1,124 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Works - Betelhem Hiluf</title>
+    <link rel="stylesheet" href="works.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="hero-header">
+        <div class="wrapper">
+            <header>
+                <div class="logo">
+                    <a href="index.html" class="logo-link">
+                        <i class="fa-solid fa-b animated-b"></i>
+                        <div class="logo-text">Betelhem Hiluf</div>
+                    </a>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fa-solid fa-sun" id="theme-icon"></i>
+                </div>
+                <nav>
+                    <div class="togglebtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </div>
+                    <ul class="navlinks">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="certificates.html">Certificates</a></li>
+                        <li><a href="works.html" class="active">Works</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div class="container">
+                <div class="works-content">
+                    <h1>My Projects</h1>
+                    <div class="works-grid">
+                        <div class="work-item">
+                            <video class="work-video" muted loop>
+                                <source src="asset/portfolio-demo.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <h3>Personal Portfolio</h3>
+                            <p>A responsive portfolio website built with HTML, CSS, and JavaScript.</p>
+                            <a href="https://betel1221.github.io/Personal-Portfolio/" class="btn view-project-btn" target="_blank">View Project</a>
+                        </div>
+                        <div class="work-item">
+                            <video class="work-video" muted loop>
+                                <source src="asset/calculator-demo.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <h3>Calculator</h3>
+                            <p>A simple and fancy calculator built with HTML, CSS, and JavaScript.</p>
+                            <a href="https://betel1221.github.io/calculator/" class="btn view-project-btn" target="_blank">View Project</a>
+                        </div>
+                        <div class="work-item">
+                            <video class="work-video" muted loop>
+                                <source src="asset/digital-clock-demo.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <h3>Digital Clock</h3>
+                            <p>A stylish digital clock built with HTML, CSS, and JavaScript.</p>
+                            <a href="https://betel1221.github.io/Digital-Clock/" class="btn view-project-btn" target="_blank">View Project</a>
+                        </div>
+                        <div class="work-item">
+                            <img class="work-image" src="asset/library-management-system.png" alt="Library Management System" onerror="this.src='https://via.placeholder.com/250x150?text=Library+System'">
+                            <h3>Library Management System</h3>
+                            <p>An interactive library management system built using Python.</p>
+                            <a href="https://github.com/betel1221/Library-Management-System" class="btn view-project-btn" target="_blank">View Project</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="wrapper">
+            <p>© 2025 Betelhem Hiluf. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="index.js"></script>
+</body>
+</html>
